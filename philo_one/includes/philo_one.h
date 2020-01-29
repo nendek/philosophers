@@ -18,33 +18,32 @@
 # define THINKING 3
 # define DEAD 4
 
-typedef struct		s_philo
+typedef struct			s_philo
 {
-	uint16_t	num;
-	uint8_t		action;
-	//voir les fourchettes
-	pthread_t	thread;
-	time_t		last_fork;
-	time_t		last_eat;
-	time_t		last_sleep;
-	time_t		last_think;
-	time_t		time_of_die;
-}			t_philo;
+	uint16_t		num;
+	uint8_t			action;
+	pthread_t		thread;
+	time_t			last_eat;
+	time_t			last_sleep;
+	time_t			last_think;
+	time_t			time_of_die;
+}				t_philo;
 
-typedef struct		s_options
+typedef struct			s_options
 {
-	uint16_t	number_of_philosopher;
-	time_t		time_to_die;
-	time_t		time_to_eat;
-	time_t		time_to_sleep;
-	time_t		number_of_time_each_philosophers_must_eat;
-}			t_options;
+	uint16_t		number_of_philosopher;
+	time_t			time_to_die;
+	time_t			time_to_eat;
+	time_t			time_to_sleep;
+	time_t			number_of_time_each_philosophers_must_eat;
+}				t_options;
 
-typedef struct		s_env
+typedef struct			s_env
 {
-	t_options	options;
-	t_philo		*philos;
-}			t_env;
+	t_options		options;
+	t_philo			*philos;
+	pthread_mutex_t		*forks;
+}				t_env;
 
 /*			**** UTILS ****				*/
 int		ft_all_is_digit(char *s);
@@ -53,7 +52,7 @@ time_t		get_timestamp_ms(void);
 
 /*			**** INIT ****				*/
 int		init_options(int ac, char **av, t_options *options);
-int		init_philos(t_env *env);
+int		init_env(t_env *env);
 
 void		*routine(void *p_data);
 

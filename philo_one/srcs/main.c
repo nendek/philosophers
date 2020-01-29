@@ -4,7 +4,11 @@
 
 void		*routine(void *p_data)
 {
-	(void)p_data;
+	t_philo *philo;
+
+	philo = (t_philo*)p_data;
+	philo->last_eat = get_timestamp_ms();
+	dprintf(1, "ici %d\n", philo->num);
 	dprintf(1, "dans un thread\n");
 	return (0);
 }
@@ -17,13 +21,8 @@ int		main(int argc, char **argv)
 		goto usage;
 	if ((init_options(argc, argv, &(env.options))) == -1)
 		goto usage;
-	if (!(env.philos = (t_philo*)malloc(sizeof(t_philo) * env.options.number_of_philosopher)))
-		goto end;
-	if (init_philos(&env))
-	{
-		//TODO effacer les process cree, free env philos et quitter
-		goto end;
-	}
+	if ((init_env(&env)) == -1)
+		return (EXIT_FAILURE);
 	for (int i = 0; i < env.options.number_of_philosopher; i++)
 	{
 		pthread_join(env.philos[i].thread, NULL);
