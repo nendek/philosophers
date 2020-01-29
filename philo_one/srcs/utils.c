@@ -41,11 +41,11 @@ long		ft_atol(const char *str)
 	return (sign * a);
 }
 
-suseconds_t	get_timestamp_us(void)
+time_t		get_timestamp_ms(void)
 {
 	struct timeval tv;
 
 	if ((gettimeofday(&tv, NULL)) == -1)
 		return 0;
-	return (tv.tv_sec * 1000000) + tv.tv_usec;
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }

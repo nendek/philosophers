@@ -1,6 +1,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
+PFLAGS = -lpthread
 
 NAME = philo_one
 FILES = main.c utils.c init.c
@@ -18,7 +19,7 @@ OBJS = $(addprefix $(OBJS_DIR)/,$(FILES:%.c=%.o))
 all: $(NAME)
 
 $(NAME): $(OBJS_DIR) $(OBJS)
-		$(CC) $(CFLAGS) $(INCS) -o $(NAME) $(OBJS)
+		$(CC) $(CFLAGS) $(INCS) -o $(NAME) $(OBJS) $(PFLAGS)
 
 $(OBJS_DIR):
 		mkdir -p $(OBJS_DIR)
