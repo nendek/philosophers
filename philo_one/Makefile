@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 
 NAME = philo_one
-FILES = main.c utils.c
+FILES = main.c utils.c init.c
 
 SRCS_DIR = srcs
 SRCS = $(addprefix $(SRCS_DIR)/,$(FILES))

@@ -6,9 +6,9 @@ int		main(int argc, char **argv)
 {
 	t_options	options;
 
-	if (argc < 4)
+	if (argc < 5 || argc > 6)
 		goto usage;
-	if ((parse_option(argc, argv, &options)) == -1)
+	if ((init_options(argc, argv, &options)) == -1)
 		goto usage;
 
 

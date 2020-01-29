@@ -29,6 +29,7 @@ typedef struct		s_philo
 
 typedef struct		s_options
 {
+	uint16_t	number_of_philosopher;
 	suseconds_t	time_to_die;
 	suseconds_t	time_to_eat;
 	suseconds_t	time_to_sleep;
