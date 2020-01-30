@@ -9,12 +9,15 @@ static int	init_philos(t_env *env)
 		env->philos[i].last_eat = get_timestamp_ms();
 		env->philos[i].last_sleep = 0;
 		env->philos[i].time_of_die = 0;
+		env->philos[i].time_eated = 0;
 		env->philos[i].env = env;
 		env->philos[i].f_right = (i + 1) % env->options.number_of_philosopher;
 		env->philos[i].f_left = i;
+		env->philos[i].full = 1;
 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, (void*)&env->philos[i]);
 		if (ret)
 			return i;
+		pthread_detach(env->philos[i].thread);
 	}
 	return (0);
 }

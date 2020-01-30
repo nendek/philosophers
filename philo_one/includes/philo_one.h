@@ -37,8 +37,9 @@ typedef struct			s_philo
 	time_t			last_eat;
 	time_t			last_sleep;
 	time_t			time_of_die;
+	time_t			time_eated;
 	struct s_env		*env;
-	int			nb_eat;
+	int			full;
 	int			f_left;
 	int			f_right;
 }				t_philo;
@@ -57,7 +58,8 @@ typedef struct			s_env
 	t_options			options;
 	t_philo				*philos;
 	pthread_mutex_t		*forks;
-	thread_mutex_t		mutex_write;
+	pthread_mutex_t		mutex_write;
+	pthread_t		monitor;
 	char				buf[BUF_SIZE];
 	int					buf_index;
 }						t_env;
@@ -81,6 +83,7 @@ void		take_forks(t_philo *philo);
 void		free_forks(t_philo *philo);
 void		eat(t_philo *philo);
 void		snooze(t_philo *philo);
+void		think(t_philo *philo);
 
 
 #endif
