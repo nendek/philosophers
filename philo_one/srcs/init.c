@@ -45,22 +45,23 @@ int		init_env(t_env *env)
 	if (!(env->philos = (t_philo*)malloc(sizeof(t_philo) * env->options.number_of_philosopher)))
 		goto error;
 	if (!(env->forks = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t) * env->options.number_of_philosopher)))
-	{
-		free(env->philos);
-		goto error;
-	}
+		goto free_philos;
 	if (init_philos(env))
 	{
 		//TODO effacer les process cree, free env philos et env forks et quitter
-		free(env->forks);
-		free(env->philos);
-		goto error;
+		goto free_forks;
 	}
 	for (int i = 0; i < env->options.number_of_philosopher; i++)
 	{
 		pthread_mutex_init(&(env->forks[i]), NULL);
 	}
+	env->buf_index = 0;
 	goto end;
+
+free_forks:
+	free(env->forks);
+free_philos:
+	free(env->philos);
 error:
 	return (-1);
 end:

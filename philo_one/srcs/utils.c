@@ -1,5 +1,4 @@
 #include "philo_one.h"
-#include <stdio.h>
 
 static int	ft_isdigit(int c)
 {
@@ -48,4 +47,63 @@ time_t		get_timestamp_ms(void)
 	if ((gettimeofday(&tv, NULL)) == -1)
 		return 0;
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+void		flush_buf(t_env *env)
+{
+	write(1, env->buf, env->buf_index);
+}
+
+void		print_buf(t_env *env, char c)
+{
+	env->buf[env->buf_index] = c;
+	(env->buf_index)++;
+	if (env->buf_index == BUF_SIZE)
+	{
+		write(1, env->buf, BUF_SIZE);
+		env->buf_index = 0;
+	}
+}
+
+void		print_nbr(t_env *env, long nbr)
+{
+	if (nbr < 10)
+		print_buf(env, nbr + '0');
+	else
+	{
+		print_nbr(env, nbr / 10);
+		print_nbr(env, nbr % 10);
+	}
+}
+
+void		print_str(t_env *env, char *str)
+{
+	int i = 0;
+
+	while (str[i] != '\0')
+	{
+		print_buf(env, str[i]);
+		i++;
+	}
+}
+
+void		print_message(t_env *env, int philo, uint8_t action)
+{
+	long timestamp = get_timestamp_ms();
+
+	print_nbr(env, timestamp);
+	print_buf(env, ' ');
+	print_nbr(env, philo);
+	if (action == FORKING)
+		print_str(env, " has taken a fork\n");
+	else if (action == EATING)
+		print_str(env, " is eating\n");
+	else if (action == SLEEPING)
+		print_str(env, " is sleeping\n");
+	else if (action == THINKING)
+		print_str(env, " is thinking\n");
+	else if (action == DEAD)
+		print_str(env, " died\n");
+	else
+		print_str(env, " has receive a wrong action print\n");
 }

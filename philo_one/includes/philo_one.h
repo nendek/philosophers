@@ -7,52 +7,67 @@
 # include <stdint.h>
 # include <pthread.h>
 
+#include <stdio.h>
+
 # include <sys/time.h>
 # include <sys/types.h>
 
-# include <bits/local_lim.h>
+# ifdef __linux__
+#  include <bits/local_lim.h>
+# endif
 
-# define WAITING 0
+# ifdef __APPLE__
+#  include <limits.h>
+# endif
+
+# define FORKING 0
 # define EATING 1
 # define SLEEPING 2
 # define THINKING 3
 # define DEAD 4
+# define WAITING 5
+
+# define BUF_SIZE 4096
 
 typedef struct			s_philo
 {
-	uint16_t		num;
-	uint8_t			action;
-	pthread_t		thread;
-	time_t			last_eat;
-	time_t			last_sleep;
-	time_t			last_think;
-	time_t			time_of_die;
-}				t_philo;
+	uint16_t			num;
+	uint8_t				action;
+	pthread_t			thread;
+	time_t				last_eat;
+	time_t				last_sleep;
+	time_t				last_think;
+	time_t				time_of_die;
+}						t_philo;
 
 typedef struct			s_options
 {
-	uint16_t		number_of_philosopher;
-	time_t			time_to_die;
-	time_t			time_to_eat;
-	time_t			time_to_sleep;
-	time_t			number_of_time_each_philosophers_must_eat;
-}				t_options;
+	uint16_t			number_of_philosopher;
+	time_t				time_to_die;
+	time_t				time_to_eat;
+	time_t				time_to_sleep;
+	time_t				number_of_time_each_philosophers_must_eat;
+}						t_options;
 
 typedef struct			s_env
 {
-	t_options		options;
-	t_philo			*philos;
+	t_options			options;
+	t_philo				*philos;
 	pthread_mutex_t		*forks;
-}				t_env;
+	char				buf[BUF_SIZE];
+	int					buf_index;
+}						t_env;
 
 /*			**** UTILS ****				*/
-int		ft_all_is_digit(char *s);
+int			ft_all_is_digit(char *s);
 long		ft_atol(const char *s);
 time_t		get_timestamp_ms(void);
+void		print_message(t_env *env, int philo, uint8_t action);
+void		flush_buf(t_env *env);
 
 /*			**** INIT ****				*/
-int		init_options(int ac, char **av, t_options *options);
-int		init_env(t_env *env);
+int			init_options(int ac, char **av, t_options *options);
+int			init_env(t_env *env);
 
 void		*routine(void *p_data);
 
