@@ -3,26 +3,30 @@
 void		take_forks(t_philo *philo)
 {
 	philo->action = FORKING;
-	//dprintf(1, "num: %d, avant lock right\n", philo->num);
-	//dprintf(1, "num fork right: %d\n",philo->f_right);
+// 	dprintf(2, "num: %d, avant lock right\n", philo->num);
+// 	dprintf(2, "philo %d fork right: %d || addr fork : %#lx\n",philo->num, philo->f_right, (size_t)(&(philo->env->forks[philo->f_right])));
 	pthread_mutex_lock(&(philo->env->forks[philo->f_right]));
-	//dprintf(1, "num: %d, avant lock left\n", philo->num);
-	//dprintf(1, "num fork left: %d\n",philo->f_left);
+// 	dprintf(2, "num: %d, avant lock left\n", philo->num);
+// 	dprintf(2, "philo %d fork left: %d || addr fork : %#lx\n",philo->num, philo->f_left, (size_t)(&(philo->env->forks[philo->f_left])));
 	pthread_mutex_lock(&(philo->env->forks[philo->f_left]));
-	//dprintf(1, "num: %d, apres lock left\n", philo->num);
+// 	dprintf(2, "num: %d, apres lock left\n", philo->num);
+	pthread_mutex_lock(&(philo->env->mutex_handle_print));
+	pthread_mutex_unlock(&(philo->env->mutex_handle_print));
 	print_message(philo->env, philo->num, FORKING);
 }
 
 void		free_forks(t_philo *philo)
 {
-	//dprintf(1, "num: %d, avant free right\n", philo->num);
-	//dprintf(1, "num fork right: %d\n",philo->f_right);
+// 	dprintf(2, "num: %d, avant free right\n", philo->num);
+// 	dprintf(2, "num fork right: %d\n",philo->f_right);
+	pthread_mutex_lock(&(philo->env->mutex_handle_print));
 	pthread_mutex_unlock(&(philo->env->forks[philo->f_right]));
-	//dprintf(1, "num: %d, avant free left\n", philo->num);
-	//dprintf(1, "num fork left: %d\n", philo->f_left);
+// 	dprintf(2, "num: %d, avant free left\n", philo->num);
+// 	dprintf(2, "num fork left: %d\n", philo->f_left);
 	pthread_mutex_unlock(&(philo->env->forks[philo->f_left]));
 	print_message(philo->env, philo->num, SLEEPING);
-	//dprintf(1, "num: %d, apres free left\n", philo->num);
+	pthread_mutex_unlock(&(philo->env->mutex_handle_print));
+// 	dprintf(2, "num: %d, apres free left\n", philo->num);
 }
 
 void		eat(t_philo *philo)

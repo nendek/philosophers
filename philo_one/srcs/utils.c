@@ -56,7 +56,6 @@ void		flush_buf(t_env *env)
 
 void		print_buf(t_env *env, char c)
 {
-	pthread_mutex_lock(&(env->mutex_write));
 	env->buf[env->buf_index] = c;
 	(env->buf_index)++;
 	if (env->buf_index == BUF_SIZE)
@@ -64,7 +63,6 @@ void		print_buf(t_env *env, char c)
 		write(1, env->buf, BUF_SIZE);
 		env->buf_index = 0;
 	}
-	pthread_mutex_unlock(&(env->mutex_write));
 }
 
 void		print_nbr(t_env *env, long nbr)
@@ -93,6 +91,7 @@ void		print_message(t_env *env, int philo, uint8_t action)
 {
 	long timestamp = get_timestamp_ms();
 	
+	pthread_mutex_lock(&(env->mutex_write));
 	print_nbr(env, timestamp);
 	print_buf(env, ' ');
 	print_nbr(env, philo);
@@ -108,4 +107,5 @@ void		print_message(t_env *env, int philo, uint8_t action)
 		print_str(env, " died\n");
 	else
 		print_str(env, " has receive a wrong action print\n");
+	pthread_mutex_unlock(&(env->mutex_write));
 }

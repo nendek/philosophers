@@ -59,6 +59,7 @@ typedef struct			s_env
 	t_philo				*philos;
 	pthread_mutex_t		*forks;
 	pthread_mutex_t		mutex_write;
+	pthread_mutex_t		mutex_handle_print;
 	pthread_t		monitor;
 	char				buf[BUF_SIZE];
 	int					buf_index;
