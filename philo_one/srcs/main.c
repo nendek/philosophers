@@ -7,9 +7,14 @@ void		*routine(void *p_data)
 	t_philo *philo;
 
 	philo = (t_philo*)p_data;
-	philo->last_eat = get_timestamp_ms();
-	dprintf(1, "ici %d\n", philo->num);
-	dprintf(1, "dans un thread\n");
+	//faire un thread qui check la mort
+	while (1)
+	{
+		take_forks(philo);
+		eat(philo);
+		free_forks(philo);
+		snooze(philo);
+	}
 	return (0);
 }
 
@@ -27,6 +32,7 @@ int		main(int argc, char **argv)
 	{
 		pthread_join(env.philos[i].thread, NULL);
 	}
+	//faire un thread qui check si il y a des morts ou l'option number of time must eat
 	goto end;
 usage:
 	write(1, "Usage: ./philo_one number_of_philosopher time_to_die time_to_eat time_to_sleep  [number_of_time_each_philosophers_must_eat]\n", 124);

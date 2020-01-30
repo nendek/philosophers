@@ -5,11 +5,12 @@ static int	init_philos(t_env *env)
 	for (int i = 0; i < env->options.number_of_philosopher; i++)
 	{
 		env->philos[i].num = i + 1;
-		env->philos[i].action = WAITING;
-		env->philos[i].last_eat = 0;
+		env->philos[i].action = FORKING;
+		env->philos[i].last_eat = get_timestamp_ms();
 		env->philos[i].last_sleep = 0;
-		env->philos[i].last_think = 0;
 		env->philos[i].time_of_die = 0;
+		env->philos[i].env = env;
+		pthread_mutex_init(&(env->philos[i].mutex_eat), NULL);
 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, (void*)&env->philos[i]);
 		if (ret)
 			return i;

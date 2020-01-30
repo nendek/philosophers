@@ -12,7 +12,7 @@
 
 # include <bits/local_lim.h>
 
-# define WAITING 0
+# define FORKING 0
 # define EATING 1
 # define SLEEPING 2
 # define THINKING 3
@@ -25,8 +25,10 @@ typedef struct			s_philo
 	pthread_t		thread;
 	time_t			last_eat;
 	time_t			last_sleep;
-	time_t			last_think;
 	time_t			time_of_die;
+	struct s_env		*env;
+	pthread_mutex_t		mutex_eat;
+	int			nb_eat;
 }				t_philo;
 
 typedef struct			s_options
@@ -54,6 +56,14 @@ time_t		get_timestamp_ms(void);
 int		init_options(int ac, char **av, t_options *options);
 int		init_env(t_env *env);
 
+/*			**** MAIN ****				*/
 void		*routine(void *p_data);
+
+/*			**** EAT ****				*/
+void		take_forks(t_philo *philo);
+void		free_forks(t_philo *philo);
+void		eat(t_philo *philo);
+void		snooze(t_philo *philo);
+
 
 #endif
