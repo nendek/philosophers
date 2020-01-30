@@ -12,7 +12,6 @@ static int	init_philos(t_env *env)
 		env->philos[i].env = env;
 		env->philos[i].f_right = (i + 1) % env->options.number_of_philosopher;
 		env->philos[i].f_left = i;
-		//pthread_mutex_init(&(env->philos[i].mutex_eat), NULL);
 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, (void*)&env->philos[i]);
 		if (ret)
 			return i;
@@ -58,6 +57,7 @@ int		init_env(t_env *env)
 	{
 		pthread_mutex_init(&(env->forks[i]), NULL);
 	}
+	pthread_mutex_init(&(env->mutex_write), NULL);
 	env->buf_index = 0;
 	goto end;
 

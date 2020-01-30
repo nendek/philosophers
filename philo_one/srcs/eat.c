@@ -31,13 +31,11 @@ void		free_forks(t_philo *philo)
 
 void		eat(t_philo *philo)
 {
-	//pthread_mutex_lock(&(philo->mutex_eat));
 	philo->action = EATING;
 	philo->last_eat = get_timestamp_ms();
 	print_message(philo->env, philo->num, EATING);
 	usleep(philo->env->options.time_to_eat * 1000);
 	philo->nb_eat += 1;
-	//pthread_mutex_unlock(&(philo->mutex_eat));
 }
 
 void		snooze(t_philo *philo)
