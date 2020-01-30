@@ -90,7 +90,7 @@ void		print_str(t_env *env, char *str)
 void		print_message(t_env *env, int philo, uint8_t action)
 {
 	long timestamp = get_timestamp_ms();
-
+	
 	print_nbr(env, timestamp);
 	print_buf(env, ' ');
 	print_nbr(env, philo);

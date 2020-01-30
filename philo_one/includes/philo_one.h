@@ -31,14 +31,18 @@
 
 typedef struct			s_philo
 {
-	uint16_t			num;
-	uint8_t				action;
-	pthread_t			thread;
-	time_t				last_eat;
-	time_t				last_sleep;
-	time_t				last_think;
-	time_t				time_of_die;
-}						t_philo;
+	uint16_t		num;
+	uint8_t			action;
+	pthread_t		thread;
+	time_t			last_eat;
+	time_t			last_sleep;
+	time_t			time_of_die;
+	struct s_env		*env;
+//	pthread_mutex_t		mutex_eat;
+	int			nb_eat;
+	int			f_left;
+	int			f_right;
+}				t_philo;
 
 typedef struct			s_options
 {
@@ -69,6 +73,14 @@ void		flush_buf(t_env *env);
 int			init_options(int ac, char **av, t_options *options);
 int			init_env(t_env *env);
 
+/*			**** MAIN ****				*/
 void		*routine(void *p_data);
+
+/*			**** EAT ****				*/
+void		take_forks(t_philo *philo);
+void		free_forks(t_philo *philo);
+void		eat(t_philo *philo);
+void		snooze(t_philo *philo);
+
 
 #endif

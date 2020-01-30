@@ -7,9 +7,14 @@ void		*routine(void *p_data)
 	t_philo *philo;
 
 	philo = (t_philo*)p_data;
-	philo->last_eat = get_timestamp_ms();
-	dprintf(1, "ici %d\n", philo->num);
-	dprintf(1, "dans un thread\n");
+	//faire un thread qui check la mort
+	while (1)
+	{
+		take_forks(philo);
+		eat(philo);
+		free_forks(philo);
+		snooze(philo);
+	}
 	return (0);
 }
 
@@ -33,12 +38,7 @@ int		main(int argc, char **argv)
 	{
 		pthread_join(env.philos[i].thread, NULL);
 	}
-	print_message(&env, 1, FORKING);
-	print_message(&env, 2, EATING);
-	print_message(&env, 3, SLEEPING);
-	print_message(&env, 4, THINKING);
-	print_message(&env, 5, WAITING);
-
+	//faire un thread qui check si il y a des morts ou l'option number of time must eat
 	flush_buf(&env);
 	return (EXIT_SUCCESS);
 }

@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror -g
 PFLAGS = -lpthread
 
 NAME = philo_one
-FILES = main.c utils.c init.c
+FILES = main.c utils.c init.c eat.c
 
 SRCS_DIR = srcs
 SRCS = $(addprefix $(SRCS_DIR)/,$(FILES))
