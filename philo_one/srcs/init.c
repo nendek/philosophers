@@ -1,4 +1,5 @@
 #include "philo_one.h"
+
 static int	init_philos(t_env *env)
 {
 	for (int i = 0; i < env->options.number_of_philosopher; i++)
@@ -24,7 +25,7 @@ static int	init_philos(t_env *env)
 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, &(env->philos[i]));
 		if (ret)
 			return i;
-// 		pthread_detach(env->philos[i].thread);
+		pthread_detach(env->philos[i].thread);
 	}
 	return (0);
 }
@@ -41,7 +42,7 @@ int		init_options(int ac, char **av, t_options *options)
 		i++;
 	}
 	options->number_of_philosopher = ft_atol(av[1]);
-	if (options->number_of_philosopher > _POSIX_THREAD_THREADS_MAX)
+	if (options->number_of_philosopher > _POSIX_THREAD_THREADS_MAX || options->number_of_philosopher < 2)
 		return (-1);
 	options->time_to_die = ft_atol(av[2]);
 	options->time_to_eat = ft_atol(av[3]);
@@ -69,14 +70,11 @@ int		init_env(t_env *env)
 	pthread_mutex_init(&(env->mutex_free_fork), NULL);
 
 	if (init_philos(env))
-	{
-		//TODO effacer les process cree, free env philos et env forks et quitter
-		goto free_forks;
-	}
+		goto free_all;
 	goto end;
-
-free_forks:
-	free(env->forks);
+free_all:
+	clean_env(env);
+	return (-1);
 free_philos:
 	free(env->philos);
 error:

@@ -11,7 +11,7 @@ static int	ft_isdigit(int c)
 int		ft_all_is_digit(char *s)
 {
 	int i;
-	
+
 	i = 0;
 	while (s[i] != '\0')
 	{
@@ -96,7 +96,7 @@ void		end_thread(t_env *env, int philo_num, uint8_t action)
 	while (1);
 }
 
-int			print_message(t_env *env, int philo, uint8_t action)
+int		print_message(t_env *env, int philo, uint8_t action)
 {
 	long timestamp = get_timestamp_ms();
 	pthread_mutex_lock(&(env->mutex_write));

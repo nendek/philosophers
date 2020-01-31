@@ -89,5 +89,8 @@ int			eat(t_philo *philo);
 void		snooze(t_philo *philo);
 int			think(t_philo *philo);
 
+/*			**** CLEAN ****				*/
+void			clean_env(t_env *env);
+
 
 #endif

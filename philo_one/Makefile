@@ -1,10 +1,9 @@
-
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 PFLAGS = -pthread
 
 NAME = philo_one
-FILES = main.c utils.c init.c eat.c
+FILES = main.c utils.c init.c eat.c clean.c
 
 SRCS_DIR = srcs
 SRCS = $(addprefix $(SRCS_DIR)/,$(FILES))
@@ -19,20 +18,20 @@ OBJS = $(addprefix $(OBJS_DIR)/,$(FILES:%.c=%.o))
 all: $(NAME)
 
 $(NAME): $(OBJS_DIR) $(OBJS)
-		$(CC) $(CFLAGS) $(INCS) -o $(NAME) $(OBJS) $(PFLAGS)
+	$(CC) $(CFLAGS) $(INCS) -o $(NAME) $(OBJS) $(PFLAGS)
 
 $(OBJS_DIR):
-		mkdir -p $(OBJS_DIR)
+	mkdir -p $(OBJS_DIR)
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
-		$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
-.PHONY: clean
+	$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
+	.PHONY: clean
 clean:
-		rm -rf objs
+	rm -rf objs
 
 .PHONY: fclean
 fclean: clean
-		rm -f $(NAME)
+	rm -f $(NAME)
 
 .PHONY: re
 re: fclean all

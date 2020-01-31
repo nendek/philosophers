@@ -1,7 +1,5 @@
 #include "philo_one.h"
 
-#include <stdio.h> //TODO debug
-
 void		*routine(void *p_data)
 {
 	t_philo *philo;
@@ -35,20 +33,6 @@ static void	check_all_thread(t_env *env)
 		pthread_join(env->philos[i].thread, NULL);
 		i++;
 	}
-}
-
-static void	destroy_all(t_env *env)
-{
-	int i = 0;
-	while (i < env->options.number_of_philosopher)
-	{
- 		pthread_mutex_destroy(&(env->forks[i]));
-		i++;
-	}
-	pthread_mutex_destroy(&(env->mutex_write));
-	pthread_mutex_destroy(&(env->mutex_free_fork));
-	free(env->forks);
-	free(env->philos);
 }
 
 static int	monitor(t_env *env)
@@ -106,6 +90,6 @@ int		main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	monitor(&env);
 	flush_buf(&env);
-	destroy_all(&env);
+	clean_env(&env);
 	return (EXIT_SUCCESS);
 }
