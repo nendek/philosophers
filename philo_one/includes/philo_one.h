@@ -40,8 +40,10 @@ typedef struct			s_philo
 	time_t			time_eated;
 	struct s_env		*env;
 	int			full;
-	int			f_left;
-	int			f_right;
+// 	int			f_left;
+// 	int			f_right;
+	pthread_mutex_t		*f_left;
+	pthread_mutex_t		*f_right;
 }				t_philo;
 
 typedef struct			s_options
@@ -57,7 +59,7 @@ typedef struct			s_env
 {
 	t_options			options;
 	t_philo				*philos;
-	pthread_mutex_t		*forks;
+// 	pthread_mutex_t		*forks;
 	pthread_mutex_t		mutex_write;
 	pthread_mutex_t		mutex_handle_print;
 	pthread_t		monitor;

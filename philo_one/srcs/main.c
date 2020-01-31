@@ -7,6 +7,8 @@ void		*routine(void *p_data)
 	t_philo *philo;
 
 	philo = (t_philo*)p_data;
+	dprintf(1, "-%p\n", (void*)(philo));
+	dprintf(1, "--%p\n", (void*)(philo->env->philos));
 	//faire un thread qui check la mort
 	while (1)
 	{
@@ -37,12 +39,12 @@ static void	destroy_all(t_env *env)
 	int i = 0;
 	while (i < env->options.number_of_philosopher)
 	{
-		pthread_mutex_destroy(&(env->forks[i]));
+// 		pthread_mutex_destroy(&(env->forks[i]));
 		i++;
 	}
 	pthread_mutex_destroy(&(env->mutex_write));
 	pthread_mutex_destroy(&(env->mutex_handle_print));
-	free(env->forks);
+// 	free(env->forks);
 	free(env->philos);
 }
 
