@@ -68,7 +68,6 @@ static int	monitor(t_env *env)
 				env->simulation_end = 1;
 				print_message(env, i + 1, DEAD);
 				while (check_all_thread(env) != 0);
-				dprintf(1, "ici\n");
 				return(0);
 			}
 			check |= env->philos[i].full;
