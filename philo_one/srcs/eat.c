@@ -1,47 +1,44 @@
 #include "philo_one.h"
 
-void		take_forks(t_philo *philo)
+int			take_forks(t_philo *philo)
 {
 	philo->action = FORKING;
-// 	dprintf(2, "num: %d, avant lock right\n", philo->num);
-// 	dprintf(2, "philo %d fork right: %d || addr fork : %#lx\n",philo->num, philo->f_right, (size_t)(&(philo->env->forks[philo->f_right])));
-// 	pthread_mutex_lock(&(philo->env->forks[philo->f_right]));
-	pthread_mutex_lock(philo->f_right);
-// 	dprintf(2, "num: %d, avant lock left\n", philo->num);
-// 	dprintf(2, "philo %d fork left: %d || addr fork : %#lx\n",philo->num, philo->f_left, (size_t)(&(philo->env->forks[philo->f_left])));
-// 	pthread_mutex_lock(&(philo->env->forks[philo->f_left]));
-	pthread_mutex_lock(philo->f_left);
-// 	dprintf(2, "num: %d, apres lock left\n", philo->num);
-	pthread_mutex_lock(&(philo->env->mutex_handle_print));
-	pthread_mutex_unlock(&(philo->env->mutex_handle_print));
-	print_message(philo->env, philo->num, FORKING);
+
+	pthread_mutex_lock(&(philo->env->forks[philo->f_right]));
+	pthread_mutex_lock(&(philo->env->forks[philo->f_left]));
+
+	pthread_mutex_lock(&(philo->env->mutex_free_fork));
+	pthread_mutex_unlock(&(philo->env->mutex_free_fork));
+
+	return (print_message(philo->env, philo->num, FORKING));
 }
 
-void		free_forks(t_philo *philo)
+int			free_forks(t_philo *philo)
 {
-// 	dprintf(2, "num: %d, avant free right\n", philo->num);
-// 	dprintf(2, "num fork right: %d\n",philo->f_right);
-	pthread_mutex_lock(&(philo->env->mutex_handle_print));
-// 	pthread_mutex_unlock(&(philo->env->forks[philo->f_right]));
-	pthread_mutex_unlock(philo->f_right);
-// 	dprintf(2, "num: %d, avant free left\n", philo->num);
-// 	dprintf(2, "num fork left: %d\n", philo->f_left);
-// 	pthread_mutex_unlock(&(philo->env->forks[philo->f_left]));
-	pthread_mutex_unlock(philo->f_left);
-	print_message(philo->env, philo->num, SLEEPING);
-	pthread_mutex_unlock(&(philo->env->mutex_handle_print));
-// 	dprintf(2, "num: %d, apres free left\n", philo->num);
+	pthread_mutex_lock(&(philo->env->mutex_free_fork));
+
+	pthread_mutex_unlock(&(philo->env->forks[philo->f_right]));
+	pthread_mutex_unlock(&(philo->env->forks[philo->f_left]));
+
+	if (print_message(philo->env, philo->num, SLEEPING) == 1)
+		return (1);;
+
+	pthread_mutex_unlock(&(philo->env->mutex_free_fork));
+	return (0);
+
 }
 
-void		eat(t_philo *philo)
+int			eat(t_philo *philo)
 {
 	philo->action = EATING;
 	philo->last_eat = get_timestamp_ms();
-	print_message(philo->env, philo->num, EATING);
+	if (print_message(philo->env, philo->num, EATING) == 1)
+		return (1);
 	usleep(philo->env->options.time_to_eat * 1000);
 	philo->time_eated += philo->env->options.time_to_eat;
 	if (philo->env->options.number_of_time_each_philosophers_must_eat < philo->time_eated)
 		philo->full = 0;
+	return (0);
 }
 
 void		snooze(t_philo *philo)
@@ -50,8 +47,8 @@ void		snooze(t_philo *philo)
 	usleep(philo->env->options.time_to_sleep * 1000);
 }
 
-void		think(t_philo *philo)
+int			think(t_philo *philo)
 {
 	philo->action = THINKING;
-	print_message(philo->env, philo->num, THINKING);
+	return (print_message(philo->env, philo->num, THINKING));
 }

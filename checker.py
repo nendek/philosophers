@@ -82,7 +82,7 @@ class Checker():
             raise Exception ("philo {} should have been dead".format(philo.num))
 
     def die(self, philo, timestamp):
-        if philo.time_todie and philo.time_to_die + 10 < int(timestamp):
+        if philo.time_to_die and philo.time_to_die + 10 < int(timestamp):
             raise Exception ("philo {} should have been dead".format(philo.num))
 
 

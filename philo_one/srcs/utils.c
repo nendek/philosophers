@@ -91,17 +91,17 @@ void		end_thread(t_env *env, int philo_num, uint8_t action)
 {
 	pthread_mutex_unlock(&(env->mutex_write));
 	if (action == SLEEPING)
-		pthread_mutex_unlock(&(env->mutex_handle_print));
+		pthread_mutex_unlock(&(env->mutex_free_fork));
 	env->philos[philo_num - 1].full = 0;
 	while (1);
 }
 
-void		print_message(t_env *env, int philo, uint8_t action)
+int			print_message(t_env *env, int philo, uint8_t action)
 {
-	pthread_mutex_lock(&(env->mutex_write));
 	long timestamp = get_timestamp_ms();
+	pthread_mutex_lock(&(env->mutex_write));
 	if (env->simulation_end == 1 && env->time_end_simulation <= timestamp && action != DEAD)
-		end_thread(env, philo, action);
+		return (1);
 	print_nbr(env, timestamp);
 	print_buf(env, ' ');
 	print_nbr(env, philo);
@@ -118,4 +118,5 @@ void		print_message(t_env *env, int philo, uint8_t action)
 	else
 		print_str(env, " has receive a wrong action print\n");
 	pthread_mutex_unlock(&(env->mutex_write));
+	return (0);
 }

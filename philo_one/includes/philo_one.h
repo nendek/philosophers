@@ -40,10 +40,8 @@ typedef struct			s_philo
 	time_t			time_eated;
 	struct s_env		*env;
 	int			full;
-// 	int			f_left;
-// 	int			f_right;
-	pthread_mutex_t		*f_left;
-	pthread_mutex_t		*f_right;
+	int			f_left;
+	int			f_right;
 }				t_philo;
 
 typedef struct			s_options
@@ -59,9 +57,9 @@ typedef struct			s_env
 {
 	t_options			options;
 	t_philo				*philos;
-// 	pthread_mutex_t		*forks;
+	pthread_mutex_t		*forks;
 	pthread_mutex_t		mutex_write;
-	pthread_mutex_t		mutex_handle_print;
+	pthread_mutex_t		mutex_free_fork;
 	pthread_t		monitor;
 	char				buf[BUF_SIZE];
 	int					buf_index;
@@ -74,7 +72,7 @@ typedef struct			s_env
 int			ft_all_is_digit(char *s);
 long		ft_atol(const char *s);
 time_t		get_timestamp_ms(void);
-void		print_message(t_env *env, int philo, uint8_t action);
+int			print_message(t_env *env, int philo, uint8_t action);
 void		flush_buf(t_env *env);
 
 /*			**** INIT ****				*/
@@ -85,11 +83,11 @@ int			init_env(t_env *env);
 void		*routine(void *p_data);
 
 /*			**** EAT ****				*/
-void		take_forks(t_philo *philo);
-void		free_forks(t_philo *philo);
-void		eat(t_philo *philo);
+int			take_forks(t_philo *philo);
+int			free_forks(t_philo *philo);
+int			eat(t_philo *philo);
 void		snooze(t_philo *philo);
-void		think(t_philo *philo);
+int			think(t_philo *philo);
 
 
 #endif

@@ -7,31 +7,34 @@ void		*routine(void *p_data)
 	t_philo *philo;
 
 	philo = (t_philo*)p_data;
-	dprintf(1, "-%p\n", (void*)(philo));
-	dprintf(1, "--%p\n", (void*)(philo->env->philos));
-	//faire un thread qui check la mort
 	while (1)
 	{
-		take_forks(philo);
-		eat(philo);
-		free_forks(philo);
+		if (take_forks(philo) == 1)
+			goto exit_thread;
+		if (eat(philo) == 1)
+			goto exit_thread;
+		if (free_forks(philo) == 1)
+			goto free_mutex;
 		snooze(philo);
-		think(philo);
+		if (think(philo) == 1)
+			goto exit_thread;
 	}
+free_mutex:
+	pthread_mutex_unlock(&(philo->env->mutex_free_fork));
+exit_thread:
+	pthread_mutex_unlock(&(philo->env->mutex_write));
 	return (0);
 }
 
-static int	check_all_thread(t_env *env)
+static void	check_all_thread(t_env *env)
 {
 	int i = 0;
-	int ret = 0;
 
 	while (i < env->options.number_of_philosopher)
 	{
-		ret |= env->philos[i].full;
+		pthread_join(env->philos[i].thread, NULL);
 		i++;
 	}
-	return (ret);
 }
 
 static void	destroy_all(t_env *env)
@@ -39,12 +42,12 @@ static void	destroy_all(t_env *env)
 	int i = 0;
 	while (i < env->options.number_of_philosopher)
 	{
-// 		pthread_mutex_destroy(&(env->forks[i]));
+ 		pthread_mutex_destroy(&(env->forks[i]));
 		i++;
 	}
 	pthread_mutex_destroy(&(env->mutex_write));
-	pthread_mutex_destroy(&(env->mutex_handle_print));
-// 	free(env->forks);
+	pthread_mutex_destroy(&(env->mutex_free_fork));
+	free(env->forks);
 	free(env->philos);
 }
 
@@ -69,7 +72,7 @@ static int	monitor(t_env *env)
 				env->time_end_simulation = get_timestamp_ms();
 				env->simulation_end = 1;
 				print_message(env, i + 1, DEAD);
-				while (check_all_thread(env) != 0);
+				check_all_thread(env);
 				return(0);
 			}
 			check |= env->philos[i].full;
@@ -78,7 +81,7 @@ static int	monitor(t_env *env)
 		{
 			env->time_end_simulation = get_timestamp_ms();
 			env->simulation_end = 1;
-			while (check_all_thread(env) != 0);
+			check_all_thread(env);
 			return (0);
 		}
 	}
@@ -101,12 +104,6 @@ int		main(int argc, char **argv)
 		return (exit_usage());
 	if ((init_env(&env)) == -1)
 		return (EXIT_FAILURE);
-	//for (int i = 0; i < env.options.number_of_philosopher; i++)
-	//{
-	//	pthread_join(env.philos[i].thread, NULL);
-	//}
-	//faire un thread qui check si il y a des morts ou l'option number of time must eat
-	//pthread_join(env.monitor, NULL);
 	monitor(&env);
 	flush_buf(&env);
 	destroy_all(&env);

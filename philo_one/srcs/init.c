@@ -1,6 +1,4 @@
 #include "philo_one.h"
-pthread_t		thread[4];
-pthread_mutex_t	mutex[4];	
 static int	init_philos(t_env *env)
 {
 	for (int i = 0; i < env->options.number_of_philosopher; i++)
@@ -12,14 +10,18 @@ static int	init_philos(t_env *env)
 		env->philos[i].time_of_die = 0;
 		env->philos[i].time_eated = 0;
 		env->philos[i].env = env;
-// 		env->philos[i].f_right = (i + 1) % env->options.number_of_philosopher;
-// 		env->philos[i].f_left = i;
-		env->philos[i].f_left = &(mutex[i]);
-		env->philos[i].f_right = &(mutex[(i + 1) % env->options.number_of_philosopher]);
+		if (i % 2)
+		{
+			env->philos[i].f_left = (i + 1) % env->options.number_of_philosopher;
+			env->philos[i].f_right = i;
+		}
+		else
+		{
+			env->philos[i].f_right = (i + 1) % env->options.number_of_philosopher;
+			env->philos[i].f_left = i;
+		}
 		env->philos[i].full = 1;
-// 		memset(env->philos[i], sizeof(
-		int ret = pthread_create(&(thread[i]), NULL, routine, &(env->philos[i]));
-// 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, &(env->philos[i]));
+		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, &(env->philos[i]));
 		if (ret)
 			return i;
 // 		pthread_detach(env->philos[i].thread);
@@ -58,13 +60,13 @@ int		init_env(t_env *env)
 
 	if (!(env->philos = (t_philo*)malloc(sizeof(t_philo) * env->options.number_of_philosopher)))
 		goto error;
-// 	if (!(env->forks = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t) * env->options.number_of_philosopher)))
-// 		goto free_philos;
+	if (!(env->forks = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t) * env->options.number_of_philosopher)))
+		goto free_philos;
 
 	for (int i = 0; i < env->options.number_of_philosopher; i++)
-		pthread_mutex_init(&(mutex[i]), NULL);
+		pthread_mutex_init(&(env->forks[i]), NULL);
 	pthread_mutex_init(&(env->mutex_write), NULL);
-	pthread_mutex_init(&(env->mutex_handle_print), NULL);
+	pthread_mutex_init(&(env->mutex_free_fork), NULL);
 
 	if (init_philos(env))
 	{
@@ -74,8 +76,8 @@ int		init_env(t_env *env)
 	goto end;
 
 free_forks:
-// 	free(env->forks);
-// free_philos:
+	free(env->forks);
+free_philos:
 	free(env->philos);
 error:
 	return (-1);
