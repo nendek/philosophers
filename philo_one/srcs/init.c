@@ -25,7 +25,6 @@ static int	init_philos(t_env *env)
 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, &(env->philos[i]));
 		if (ret)
 			return i;
-		pthread_detach(env->philos[i].thread);
 	}
 	return (0);
 }
