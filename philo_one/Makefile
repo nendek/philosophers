@@ -1,7 +1,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
-PFLAGS = -lpthread
+PFLAGS = -pthread
 
 NAME = philo_one
 FILES = main.c utils.c init.c eat.c
