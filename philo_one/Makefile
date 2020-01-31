@@ -25,7 +25,8 @@ $(OBJS_DIR):
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCS) -c -o $@ $<
-	.PHONY: clean
+
+.PHONY: clean
 clean:
 	rm -rf objs
 
