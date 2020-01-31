@@ -48,6 +48,7 @@ class Checker():
         self.lines = f.readlines()
         f.close()
         self.nb_line = 1
+        self.last_line = ""
 
 
     def __str__(self):
@@ -59,6 +60,7 @@ class Checker():
     def check(self):
         try:
             for line in self.lines:
+                self.last_line = line
                 tab = line.split()
                 self.update_philos(tab)
                 self.nb_line += 1
@@ -127,5 +129,5 @@ print(checker)
 if checker.check() == True:
     print("Trace ok")
 else:
-    print("Trace wrong: \n\tline : {} \n\tproblem : {}".format(checker.nb_line, checker.problem))
+    print("Trace wrong: \n\tline_number : {} \n\tline : '{}' \n\tproblem : {}".format(checker.nb_line, checker.last_line, checker.problem))
 

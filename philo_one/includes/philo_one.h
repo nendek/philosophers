@@ -63,6 +63,9 @@ typedef struct			s_env
 	pthread_t		monitor;
 	char				buf[BUF_SIZE];
 	int					buf_index;
+
+	int					simulation_end;
+	time_t				time_end_simulation;
 }						t_env;
 
 /*			**** UTILS ****				*/

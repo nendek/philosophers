@@ -19,6 +19,33 @@ void		*routine(void *p_data)
 	return (0);
 }
 
+static int	check_all_thread(t_env *env)
+{
+	int i = 0;
+	int ret = 0;
+
+	while (i < env->options.number_of_philosopher)
+	{
+		ret |= env->philos[i].full;
+		i++;
+	}
+	return (ret);
+}
+
+static void	destroy_all(t_env *env)
+{
+	int i = 0;
+	while (i < env->options.number_of_philosopher)
+	{
+		pthread_mutex_destroy(&(env->forks[i]));
+		i++;
+	}
+	pthread_mutex_destroy(&(env->mutex_write));
+	pthread_mutex_destroy(&(env->mutex_handle_print));
+	free(env->forks);
+	free(env->philos);
+}
+
 static int	monitor(t_env *env)
 {
 	time_t		now;
@@ -37,13 +64,22 @@ static int	monitor(t_env *env)
 		{
 			if ((now - env->philos[i].last_eat) > env->options.time_to_die)
 			{
+				env->time_end_simulation = get_timestamp_ms();
+				env->simulation_end = 1;
 				print_message(env, i + 1, DEAD);
+				while (check_all_thread(env) != 0);
+				dprintf(1, "ici\n");
 				return(0);
 			}
 			check |= env->philos[i].full;
 		}
 		if (!check)
+		{
+			env->time_end_simulation = get_timestamp_ms();
+			env->simulation_end = 1;
+			while (check_all_thread(env) != 0);
 			return (0);
+		}
 	}
 	return (0);
 }
@@ -72,5 +108,6 @@ int		main(int argc, char **argv)
 	//pthread_join(env.monitor, NULL);
 	monitor(&env);
 	flush_buf(&env);
+	destroy_all(&env);
 	return (EXIT_SUCCESS);
 }

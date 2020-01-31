@@ -48,21 +48,24 @@ int		init_options(int ac, char **av, t_options *options)
 int		init_env(t_env *env)
 {
 	env->buf_index = 0;
+	env->simulation_end = 0;
+	env->time_end_simulation = 0;
+
 	if (!(env->philos = (t_philo*)malloc(sizeof(t_philo) * env->options.number_of_philosopher)))
 		goto error;
 	if (!(env->forks = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t) * env->options.number_of_philosopher)))
 		goto free_philos;
+
+	for (int i = 0; i < env->options.number_of_philosopher; i++)
+		pthread_mutex_init(&(env->forks[i]), NULL);
+	pthread_mutex_init(&(env->mutex_write), NULL);
+	pthread_mutex_init(&(env->mutex_handle_print), NULL);
+
 	if (init_philos(env))
 	{
 		//TODO effacer les process cree, free env philos et env forks et quitter
 		goto free_forks;
 	}
-	for (int i = 0; i < env->options.number_of_philosopher; i++)
-	{
-		pthread_mutex_init(&(env->forks[i]), NULL);
-	}
-	pthread_mutex_init(&(env->mutex_write), NULL);
-	pthread_mutex_init(&(env->mutex_handle_print), NULL);
 	goto end;
 
 free_forks:

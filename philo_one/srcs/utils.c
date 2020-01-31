@@ -87,11 +87,19 @@ void		print_str(t_env *env, char *str)
 	}
 }
 
+void		end_thread(t_env *env, int philo_num)
+{
+	pthread_mutex_unlock(&(env->mutex_write));
+	env->philos[philo_num - 1].full = 0;
+	while (1);
+}
+
 void		print_message(t_env *env, int philo, uint8_t action)
 {
-	long timestamp = get_timestamp_ms();
-	
 	pthread_mutex_lock(&(env->mutex_write));
+	long timestamp = get_timestamp_ms();
+	if (env->simulation_end == 1 && env->time_end_simulation <= timestamp && action != DEAD)
+		end_thread(env, philo);
 	print_nbr(env, timestamp);
 	print_buf(env, ' ');
 	print_nbr(env, philo);
