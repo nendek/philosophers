@@ -1,16 +1,16 @@
-#include "philo_one.h"
+#include "philo_two.h"
 
 int			take_forks(t_philo *philo)
 {
 	philo->action = FORKING;
 
-	sem_wait(philo->env->sem_forks);
+	sem_wait(philo->env->forks_sem);
 	return (print_message(philo->env, philo->num, FORKING));
 }
 
 int			free_forks(t_philo *philo)
 {
-	sem_post(philo->env->sem_forks);
+	sem_post(philo->env->forks_sem);
 	if (print_message(philo->env, philo->num, SLEEPING) == 1)
 		return (1);;
 	return (0);

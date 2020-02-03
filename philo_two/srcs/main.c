@@ -1,4 +1,4 @@
-#include "philo_one.h"
+#include "philo_two.h"
 
 void		*routine(void *p_data)
 {
@@ -18,11 +18,9 @@ void		*routine(void *p_data)
 			goto exit_thread;
 	}
 free_sem:
-	sem_post(philo->env->sem_forks);
-	//pthread_mutex_unlock(&(philo->env->mutex_free_fork));
+	sem_post(philo->env->forks_sem);
 exit_thread:
-	sem_post(philo->env->sem_mutex_write);
-	//pthread_mutex_unlock(&(philo->env->mutex_write));
+	sem_post(philo->env->write_sem);
 	return (0);
 }
 
@@ -76,7 +74,7 @@ static int	monitor(t_env *env)
 
 int		exit_usage(void)
 {
-	write(1, "Usage: ./philo_one number_of_philosopher time_to_die time_to_eat time_to_sleep  [number_of_time_each_philosophers_must_eat]\n", 124);
+	write(1, "Usage: ./philo_two number_of_philosopher time_to_die time_to_eat time_to_sleep  [number_of_time_each_philosophers_must_eat]\n", 124);
 	return (EXIT_FAILURE);
 }
 

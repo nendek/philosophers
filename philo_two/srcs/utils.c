@@ -1,4 +1,4 @@
-#include "philo_one.h"
+#include "philo_two.h"
 
 static int	ft_isdigit(int c)
 {
@@ -90,7 +90,7 @@ void		print_str(t_env *env, char *str)
 int		print_message(t_env *env, int philo, uint8_t action)
 {
 	long timestamp = get_timestamp_ms();
-	sem_wait(env->sem_mutex_write);
+	sem_wait(env->write_sem);
 	if (env->simulation_end == 1 && env->time_end_simulation <= timestamp && action != DEAD)
 		return (1);
 	print_nbr(env, timestamp);
@@ -108,6 +108,6 @@ int		print_message(t_env *env, int philo, uint8_t action)
 		print_str(env, " died\n");
 	else
 		print_str(env, " has receive a wrong action print\n");
-	sem_post(env->sem_mutex_write);
+	sem_post(env->write_sem);
 	return (0);
 }

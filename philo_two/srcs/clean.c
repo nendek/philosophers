@@ -1,17 +1,8 @@
-#include "philo_one.h"
+#include "philo_two.h"
 
 void		clean_env(t_env *env)
 {
-	//int i = 0;
-	//while (i < env->options.number_of_philosopher)
-	//{
- 	//	pthread_mutex_destroy(&(env->forks[i]));
-	//	i++;
-	//}
-	//pthread_mutex_destroy(&(env->mutex_write));
-	//pthread_mutex_destroy(&(env->mutex_free_fork));
-	//free(env->forks);
-	sem_close(env->sem_forks);
-	sem_close(env->sem_mutex_write);
+	sem_close(env->forks_sem);
+	sem_close(env->write_sem);
 	free(env->philos);
 }

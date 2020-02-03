@@ -7,6 +7,7 @@
 # include <stdint.h>
 # include <pthread.h>
 # include <semaphore.h>
+# include <fcntl.h>
 
 # include <sys/time.h>
 # include <sys/types.h>
@@ -27,8 +28,8 @@
 
 # define BUF_SIZE 4096
 
-# define SEM_FORKS_NAME "philo_forks"
-# define SEM_WRITE_NAME "philo_mutex_write"
+# define FORKS_SEM_NAME "philo_forks"
+# define WRITE_SEM_NAME "philo_mutex_write"
 
 typedef struct			s_philo
 {
@@ -57,15 +58,10 @@ typedef struct			s_env
 {
 	t_options		options;
 	t_philo			*philos;
-
-	sem_t			*sem_forks;
-	sem_t			*sem_mutex_write;
-	//pthread_mutex_t		mutex_write;
-	//pthread_mutex_t		mutex_free_fork;
-	pthread_t		monitor;
+	sem_t			*forks_sem;
+	sem_t			*write_sem;
 	char			buf[BUF_SIZE];
 	int			buf_index;
-
 	int			simulation_end;
 	time_t			time_end_simulation;
 }				t_env;
