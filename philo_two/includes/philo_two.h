@@ -1,5 +1,5 @@
-#ifndef PHILO_ONE_H
-# define PHILO_ONE_H
+#ifndef PHILO_TWO_H
+# define PHILO_TWO_H
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -41,8 +41,6 @@ typedef struct			s_philo
 	time_t			time_eated;
 	struct s_env		*env;
 	int			full;
-	int			f_left;
-	int			f_right;
 }				t_philo;
 
 typedef struct			s_options
