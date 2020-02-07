@@ -16,6 +16,7 @@ int			take_forks(t_philo *philo)
 int			free_forks(t_philo *philo)
 {
 	sem_wait(philo->env->free_fork_sem);
+
 	sem_post(philo->env->forks_sem);
 	sem_post(philo->env->forks_sem);
 	if (print_message(philo->env, philo->num, SLEEPING) == 1)
@@ -28,6 +29,7 @@ int			free_forks(t_philo *philo)
 
 int			eat(t_philo *philo)
 {
+
 	philo->action = EATING;
 	philo->last_eat = get_timestamp_ms();
 	if (print_message(philo->env, philo->num, EATING) == 1)
@@ -35,7 +37,13 @@ int			eat(t_philo *philo)
 	usleep(philo->env->options.time_to_eat * 1000);
 	philo->time_eated += philo->env->options.time_to_eat;
 	if (philo->env->options.number_of_time_each_philosophers_must_eat < philo->time_eated)
-		philo->full = 0;
+	{
+		if (((philo->env->options.number_of_time_each_philosophers_must_eat) != 0) && (philo->full == 0))
+		{
+			sem_post(philo->env->check_full_sem);
+			philo->full = 1;
+		}
+	}
 	return (0);
 }
 

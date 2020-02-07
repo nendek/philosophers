@@ -8,7 +8,7 @@ static int	init_philos(t_env *env, int i)
 	env->philos->time_of_die = 0;
 	env->philos->time_eated = 0;
 	env->philos->env = env;
-	env->philos->full = 1;
+	env->philos->full = 0;
 // 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, &(env->philos[i]));
 // 		if (ret)
 // 			return i;
@@ -41,6 +41,7 @@ int		init_options(int ac, char **av, t_options *options)
 int		init_env(t_env *env)
 {
 	env->buf_index = 0;
+    env->full = 0;
 
 // 	TODO : gestion d'erreures
 	if ((env->forks_sem = sem_open(FORKS_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, env->options.number_of_philosopher)) == SEM_FAILED)
@@ -49,6 +50,9 @@ int		init_env(t_env *env)
 		goto error;
 	if ((env->free_fork_sem = sem_open(FREE_FORK_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, 1)) == SEM_FAILED)
 		goto error;
+	if ((env->check_full_sem = sem_open(CHECK_FULL_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, 0)) == SEM_FAILED)
+		goto error;
+
 	if (!(env->philos = (t_philo*)malloc(sizeof(t_philo) * 1)))
 		goto error;
 	if (!(env->pids = (pid_t *)malloc(sizeof(pid_t) * env->options.number_of_philosopher)))

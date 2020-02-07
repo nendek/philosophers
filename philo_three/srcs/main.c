@@ -16,46 +16,72 @@ void		*routine(t_philo *philo)
 	}
 free_mutex:
 	(void)philo;
-// 	pthread_mutex_unlock(&(philo->env->mutex_free_fork));
+	// 	pthread_mutex_unlock(&(philo->env->mutex_free_fork));
 exit_thread:
-// 	pthread_mutex_unlock(&(philo->env->mutex_write));
+	// 	pthread_mutex_unlock(&(philo->env->mutex_write));
 	exit(-1);
+}
+
+void	*check_full(void *data)
+{
+	t_env	*env;
+	int		count;
+
+	env = (t_env *)data;
+	count = 0;
+	while (count < env->options.number_of_philosopher)
+	{
+		sem_wait(env->check_full_sem);
+		count++;
+	}
+	env->full = 1;
+	return (0);
 }
 
 static int	monitor(t_env *env)
 {
-	int		status;
-	int		i;
-	long	timestamp;
+    int     i;
+    int     status;
+    time_t  timestamp;
+	int		print = 0;
 
+
+    
+	pthread_create(&(env->thread), NULL, check_full, env);
+// 	nb = env->options.number_of_philosopher;
 	while(1)
 	{
-		i = 0;
-		while (i < env->options.number_of_philosopher)
-		{
-			waitpid(env->pids[i], &status, WNOHANG);
-			if (WIFEXITED(status) == 1)
+        i = 0;
+        while (i < env->options.number_of_philosopher)
+        {
+            waitpid(env->pids[i], &status, WNOHANG);
+            if (WIFEXITED(status) == 1)
+                goto kill_all;
+            i++;
+			if (env->full == 1)
 			{
-				timestamp = get_timestamp_ms();
+				print = 1;
 				goto kill_all;
 			}
-			i++;
-		}
+        }
 	}
+
 kill_all:
+	timestamp = get_timestamp_ms();
 	for (int j = 0; j < env->options.number_of_philosopher; j++)
-	{
 		kill(env->pids[j], SIGKILL);
-	}
 	sem_unlink(FORKS_SEM_NAME);
 	sem_unlink(WRITE_SEM_NAME);
 	sem_unlink(FREE_FORK_SEM_NAME);
-	flush_buf(env);
-	print_nbr(env, timestamp);
-	print_str(env, " ");
-	print_nbr(env, i + 1);
-	print_str(env, " died\n");
-	flush_buf(env);
+	sem_unlink(CHECK_FULL_SEM_NAME);
+	if (print == 0)
+	{
+		print_nbr(env, timestamp);
+		print_str(env, " ");
+		print_nbr(env, i + 1);
+		print_str(env, " died\n");
+		flush_buf(env);
+	}
 	return (0);
 }
 
@@ -76,7 +102,7 @@ int		main(int argc, char **argv)
 	if ((init_env(&env)) == -1)
 		return (EXIT_FAILURE);
 	monitor(&env);
-	flush_buf(&env);
+// 	flush_buf(&env);
 	clean_env(&env);
 	return (EXIT_SUCCESS);
 }

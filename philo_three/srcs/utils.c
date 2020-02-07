@@ -101,9 +101,6 @@ int		print_message(t_env *env, int philo, uint8_t action)
 	sem_wait(env->write_sem);
 	if (check_die(env, timestamp))
 		return (1);
-// 	pthread_mutex_lock(&(env->mutex_write));
-// 	if (env->simulation_end == 1 && env->time_end_simulation <= timestamp && action != DEAD)
-// 		return (1);
 	print_nbr(env, timestamp);
 	print_buf(env, ' ');
 	print_nbr(env, philo);
@@ -121,6 +118,5 @@ int		print_message(t_env *env, int philo, uint8_t action)
 		print_str(env, " has receive a wrong action print\n");
 	flush_buf(env);
 	sem_post(env->write_sem);
-// 	pthread_mutex_unlock(&(env->mutex_write));
 	return (0);
 }
