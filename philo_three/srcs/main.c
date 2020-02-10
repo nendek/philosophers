@@ -9,16 +9,15 @@ void		*routine(t_philo *philo)
 		if (eat(philo) == 1)
 			goto exit_thread;
 		if (free_forks(philo) == 1)
-			goto free_mutex;
+			goto free_sem;
 		snooze(philo);
 		if (think(philo) == 1)
 			goto exit_thread;
 	}
-free_mutex:
-	(void)philo;
-	// 	pthread_mutex_unlock(&(philo->env->mutex_free_fork));
+free_sem:
+	sem_post(philo->env->forks_sem);
 exit_thread:
-	// 	pthread_mutex_unlock(&(philo->env->mutex_write));
+	sem_post(philo->env->write_sem);
 	exit(-1);
 }
 
@@ -40,40 +39,31 @@ void	*check_full(void *data)
 
 static int	monitor(t_env *env)
 {
-    int     i;
-    int     status;
-    time_t  timestamp;
+	int     i;
+	int     status;
+	time_t  timestamp;
 	int		print = 0;
 
-
-    
 	pthread_create(&(env->thread), NULL, check_full, env);
-// 	nb = env->options.number_of_philosopher;
 	while(1)
 	{
-        i = 0;
-        while (i < env->options.number_of_philosopher)
-        {
-            waitpid(env->pids[i], &status, WNOHANG);
-            if (WIFEXITED(status) == 1)
-                goto kill_all;
-            i++;
+		i = 0;
+		while (i < env->options.number_of_philosopher)
+		{
+			waitpid(env->pids[i], &status, WNOHANG);
+			if (WIFEXITED(status) == 1)
+				goto kill_all;
+			i++;
 			if (env->full == 1)
 			{
 				print = 1;
 				goto kill_all;
 			}
-        }
+		}
 	}
 
 kill_all:
 	timestamp = get_timestamp_ms();
-	for (int j = 0; j < env->options.number_of_philosopher; j++)
-		kill(env->pids[j], SIGKILL);
-	sem_unlink(FORKS_SEM_NAME);
-	sem_unlink(WRITE_SEM_NAME);
-	sem_unlink(FREE_FORK_SEM_NAME);
-	sem_unlink(CHECK_FULL_SEM_NAME);
 	if (print == 0)
 	{
 		print_nbr(env, timestamp);
@@ -102,7 +92,7 @@ int		main(int argc, char **argv)
 	if ((init_env(&env)) == -1)
 		return (EXIT_FAILURE);
 	monitor(&env);
-// 	flush_buf(&env);
+ 	flush_buf(&env);
 	clean_env(&env);
 	return (EXIT_SUCCESS);
 }

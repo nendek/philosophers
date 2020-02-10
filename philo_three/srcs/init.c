@@ -9,9 +9,6 @@ static int	init_philos(t_env *env, int i)
 	env->philos->time_eated = 0;
 	env->philos->env = env;
 	env->philos->full = 0;
-// 		int ret = pthread_create(&(env->philos[i].thread), NULL, routine, &(env->philos[i]));
-// 		if (ret)
-// 			return i;
 	return (0);
 }
 
@@ -27,7 +24,7 @@ int		init_options(int ac, char **av, t_options *options)
 		i++;
 	}
 	options->number_of_philosopher = ft_atol(av[1]);
-	if (options->number_of_philosopher < 2)
+	if (options->number_of_philosopher > _POSIX_THREAD_THREADS_MAX || options->number_of_philosopher < 2)
 		return (-1);
 	options->time_to_die = ft_atol(av[2]);
 	options->time_to_eat = ft_atol(av[3]);
@@ -40,23 +37,25 @@ int		init_options(int ac, char **av, t_options *options)
 
 int		init_env(t_env *env)
 {
+	int nb_forks;
+
 	env->buf_index = 0;
-    env->full = 0;
-
-// 	TODO : gestion d'erreures
-	if ((env->forks_sem = sem_open(FORKS_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, env->options.number_of_philosopher)) == SEM_FAILED)
-		goto error;
-	if ((env->write_sem = sem_open(WRITE_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, 1)) == SEM_FAILED)
-		goto error;
-	if ((env->free_fork_sem = sem_open(FREE_FORK_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, 1)) == SEM_FAILED)
-		goto error;
-	if ((env->check_full_sem = sem_open(CHECK_FULL_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, 0)) == SEM_FAILED)
-		goto error;
-
+	env->full = 0;
 	if (!(env->philos = (t_philo*)malloc(sizeof(t_philo) * 1)))
-		goto error;
+		goto end;
 	if (!(env->pids = (pid_t *)malloc(sizeof(pid_t) * env->options.number_of_philosopher)))
 		goto free_philos;
+	nb_forks = env->options.number_of_philosopher - (env->options.number_of_philosopher % 2);
+	if ((env->forks_sem = sem_open(FORKS_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, nb_forks)) == SEM_FAILED)
+		goto free_pids;
+	sem_unlink(FORKS_SEM_NAME);
+	if ((env->write_sem = sem_open(WRITE_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, 1)) == SEM_FAILED)
+		goto free_forks_sem;
+	sem_unlink(WRITE_SEM_NAME);
+	if ((env->check_full_sem = sem_open(CHECK_FULL_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, 0)) == SEM_FAILED)
+		goto free_write_sem;
+	sem_unlink(CHECK_FULL_SEM_NAME);
+
 	for (int i = 0; i < env->options.number_of_philosopher; i++)
 	{
 		env->pids[i] = fork();
@@ -67,29 +66,24 @@ int		init_env(t_env *env)
 		}
 		else if (env->pids[i] < 0)
 		{
-			// TODO : kill all
-			goto free_pids;
+			env->nb_child = i - 1;
+			goto free_all;
 		}
-
 	}
-// 	if (!(env->forks = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t) * env->options.number_of_philosopher)))
-// 		goto free_philos;
-
-// 	for (int i = 0; i < env->options.number_of_philosopher; i++)
-// 		pthread_mutex_init(&(env->forks[i]), NULL);
-// 	pthread_mutex_init(&(env->mutex_write), NULL);
-// 	pthread_mutex_init(&(env->mutex_free_fork), NULL);
-
-// 	if (init_philos(env))
-// 		goto free_pids;
+	env->nb_child = env->options.number_of_philosopher;
 	return (0);
-
+free_all:
+	clean_env(env);
+	return (-1);
+free_write_sem:
+	sem_close(env->write_sem);
+free_forks_sem:
+	sem_close(env->forks_sem);
 free_pids:
 	free(env->pids);
 free_philos:
 	free(env->philos);
-error:
-	perror("test: ");
+end:
 	return (-1);
 }
 

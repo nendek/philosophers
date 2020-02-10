@@ -5,26 +5,15 @@ int			take_forks(t_philo *philo)
 	philo->action = FORKING;
 
 	sem_wait(philo->env->forks_sem);
-	sem_wait(philo->env->forks_sem);
-
-	sem_wait(philo->env->free_fork_sem);
-	sem_post(philo->env->free_fork_sem);
-
 	return (print_message(philo->env, philo->num, FORKING));
 }
 
 int			free_forks(t_philo *philo)
 {
-	sem_wait(philo->env->free_fork_sem);
-
-	sem_post(philo->env->forks_sem);
 	sem_post(philo->env->forks_sem);
 	if (print_message(philo->env, philo->num, SLEEPING) == 1)
 		return (1);;
-
-	sem_post(philo->env->free_fork_sem);
 	return (0);
-
 }
 
 int			eat(t_philo *philo)

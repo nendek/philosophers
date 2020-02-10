@@ -2,14 +2,11 @@
 
 void		clean_env(t_env *env)
 {
-// 	int i = 0;
-// 	while (i < env->options.number_of_philosopher)
-// 	{
-//  		pthread_mutex_destroy(&(env->forks[i]));
-// 		i++;
-// 	}
-// 	pthread_mutex_destroy(&(env->mutex_write));
-// 	pthread_mutex_destroy(&(env->mutex_free_fork));
-// 	free(env->forks);
+	for (int j = 0; j < env->nb_child; j++)
+		kill(env->pids[j], SIGKILL);
+	sem_close(env->forks_sem);
+	sem_close(env->write_sem);
+	sem_close(env->check_full_sem);
 	free(env->philos);
+	free(env->pids);
 }

@@ -50,9 +50,7 @@ int		init_env(t_env *env)
 	env->time_end_simulation = 0;
 	if (!(env->philos = (t_philo*)malloc(sizeof(t_philo) * env->options.number_of_philosopher)))
 		goto error;
-	nb_forks = env->options.number_of_philosopher;
-	if (!(env->options.number_of_philosopher % 2))
-		nb_forks -= 1;
+	nb_forks = env->options.number_of_philosopher - (env->options.number_of_philosopher % 2);
 	if ((env->forks_sem = sem_open(FORKS_SEM_NAME, O_CREAT, S_IRWXU, nb_forks)) == SEM_FAILED)
 		goto free_philos;
 	sem_unlink(FORKS_SEM_NAME);
