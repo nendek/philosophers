@@ -101,7 +101,10 @@ int		print_message(t_env *env, int philo, uint8_t action)
 	long timestamp = get_timestamp_ms();
 	pthread_mutex_lock(&(env->mutex_write));
 	if (env->simulation_end == 1 && env->time_end_simulation <= timestamp && action != DEAD)
+	{
+		pthread_mutex_unlock(&(env->mutex_write));
 		return (1);
+	}
 	print_nbr(env, timestamp);
 	print_buf(env, ' ');
 	print_nbr(env, philo);

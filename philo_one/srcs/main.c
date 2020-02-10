@@ -8,7 +8,11 @@ void		*routine(void *p_data)
 	while (1)
 	{
 		if (take_forks(philo) == 1)
+		{
+			pthread_mutex_unlock(&(philo->env->forks[philo->f_right]));
+			pthread_mutex_unlock(&(philo->env->forks[philo->f_left]));
 			goto exit_thread;
+		}
 		if (eat(philo) == 1)
 			goto exit_thread;
 		if (free_forks(philo) == 1)

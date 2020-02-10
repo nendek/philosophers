@@ -21,7 +21,7 @@ int			free_forks(t_philo *philo)
 	pthread_mutex_unlock(&(philo->env->forks[philo->f_left]));
 
 	if (print_message(philo->env, philo->num, SLEEPING) == 1)
-		return (1);;
+		return (1);
 
 	pthread_mutex_unlock(&(philo->env->mutex_free_fork));
 	return (0);

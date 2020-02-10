@@ -70,7 +70,8 @@ int		init_env(t_env *env)
 
 	if (init_philos(env))
 		goto free_all;
-	goto end;
+	return (0);
+
 free_all:
 	clean_env(env);
 	return (-1);
@@ -78,7 +79,5 @@ free_philos:
 	free(env->philos);
 error:
 	return (-1);
-end:
-	return (0);
 }
 
