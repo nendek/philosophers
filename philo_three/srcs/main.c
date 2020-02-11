@@ -50,6 +50,7 @@ static int	monitor(t_env *env)
 		i = 0;
 		while (i < env->options.number_of_philosopher)
 		{
+			timestamp = get_timestamp_ms();
 			waitpid(env->pids[i], &status, WNOHANG);
 			if (WIFEXITED(status) == 1)
 				goto kill_all;
@@ -93,7 +94,5 @@ int		main(int argc, char **argv)
 	if ((init_env(&env)) == -1)
 		return (EXIT_FAILURE);
 	monitor(&env);
- 	flush_buf(&env);
-// 	clean_env(&env);
 	return (EXIT_SUCCESS);
 }

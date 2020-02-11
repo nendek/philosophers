@@ -10,9 +10,9 @@ int			take_forks(t_philo *philo)
 
 int			free_forks(t_philo *philo)
 {
-	sem_post(philo->env->forks_sem);
 	if (print_message(philo->env, philo->num, SLEEPING) == 1)
 		return (1);;
+	sem_post(philo->env->forks_sem);
 	return (0);
 
 }
