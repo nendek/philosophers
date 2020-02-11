@@ -68,7 +68,6 @@ static int	monitor(t_env *env)
 		if (!check)
 		{
 			env->time_end_simulation = get_timestamp_ms();
-			env->simulation_end = 1;
 			check_all_thread(env);
 			return (0);
 		}

@@ -64,6 +64,7 @@ static int	monitor(t_env *env)
 
 kill_all:
 	timestamp = get_timestamp_ms();
+	clean_env(env);
 	if (print == 0)
 	{
 		print_nbr(env, timestamp);
@@ -93,6 +94,6 @@ int		main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	monitor(&env);
  	flush_buf(&env);
-	clean_env(&env);
+// 	clean_env(&env);
 	return (EXIT_SUCCESS);
 }

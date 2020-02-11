@@ -45,7 +45,7 @@ int		init_env(t_env *env)
 		goto end;
 	if (!(env->pids = (pid_t *)malloc(sizeof(pid_t) * env->options.number_of_philosopher)))
 		goto free_philos;
-	nb_forks = env->options.number_of_philosopher - (env->options.number_of_philosopher % 2);
+	nb_forks = (env->options.number_of_philosopher / 2);
 	if ((env->forks_sem = sem_open(FORKS_SEM_NAME, O_CREAT | O_EXCL, S_IRWXU, nb_forks)) == SEM_FAILED)
 		goto free_pids;
 	sem_unlink(FORKS_SEM_NAME);
