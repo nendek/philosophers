@@ -58,7 +58,6 @@ static int	monitor(t_env *env)
 			if ((now - env->philos[i].last_eat) > env->options.time_to_die)
 			{
 				env->time_end_simulation = get_timestamp_ms();
-				env->simulation_end = 1;
 				print_message(env, i + 1, DEAD);
 				check_all_thread(env);
 				return(0);

@@ -1,7 +1,6 @@
 #ifndef PHILO_THREE_H
 # define PHILO_THREE_H
 
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
