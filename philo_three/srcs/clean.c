@@ -2,7 +2,7 @@
 
 void		clean_env(t_env *env)
 {
-	for (int j = 0; j < env->nb_child; j++)
+	for (int j = 0; j != env->nb_child; j++)
 		kill(env->pids[j], SIGKILL);
 	sem_close(env->forks_sem);
 	sem_close(env->write_sem);
