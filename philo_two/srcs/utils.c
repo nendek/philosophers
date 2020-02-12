@@ -108,6 +108,8 @@ int		print_message(t_env *env, int philo, uint8_t action)
 		print_str(env, " died\n");
 	else
 		print_str(env, " has receive a wrong action print\n");
+	if (action == DEAD)
+		env->simulation_end = 1;
 	sem_post(env->write_sem);
 	return (0);
 }
